@@ -1,17 +1,22 @@
-from config import config
+# test_database.py
+from models.database_models import init_db, SessionLocal, Product
+print("🧪 Testing Database Setup...")
+try:
+    # Initialize the database
+    init_db()
+    print("✅ Database tables created successfully!")
 
-print("🔧 Testing Configuration...")
-print(f"Project Directory: {config.BASE_DIR}")
-print(f"Receipts Folder: {config.RECEIPTS_DIR}")
-print(f"Logs Folder: {config.LOGS_DIR}")
-print(f"Database Folder: {config.DATABASES_DIR}")
-print(f"Debug Mode: {config.DEBUG}")
-print(f"Tesseract Path: {config.TESSERACT_PATH}")
+    # Test if we can query products
+    db = SessionLocal()
+    products = db.query(Product).all()
+    print(f"✅ Found {len(products)} sample products in database")
 
-# Check if WhatsApp token is loaded
-if config.WHATSAPP_TOKEN and not config.WHATSAPP_TOKEN.startswith('your_'):
-    print("✅ WhatsApp Token: LOADED (secure)")
-else:
-    print("❌ WhatsApp Token: MISSING or using placeholder")
+    # Show the products
+    for product in products:
+        print(f"   - {product.name}: ₦{product.price} ({product.data_size})")
 
-print("✅ Configuration test completed!")
+    db.close()
+    print("🎉 Database setup completed successfully!")
+
+except Exception as e:
+    print(f"❌ Database setup failed: {e}")
